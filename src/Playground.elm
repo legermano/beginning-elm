@@ -1,6 +1,13 @@
-module Playground exposing (main)
+module Playground exposing
+    ( doubleScores
+    , highestScores
+    , main
+    , scoresLessThan320
+    )
 
+import Css exposing (Number, int)
 import Html
+import Regex
 
 
 main =
@@ -8,8 +15,14 @@ main =
     --     |> computeSpeed 7.5
     --     |> escapeEarth 11 "full"
     --     |> Html.text
-    [ 316, 320, 312, 370, 337, 318, 314 ]
-        |> List.sortWith descending
+    -- [ 316, 320, 312, 370, 337, 318, 314 ]
+    --     |> List.sortWith descending
+    --     |> Debug.toString
+    --     |> Html.text
+    -- validateEmail "thedude@rubix.com"
+    --     |> Debug.toString
+    --     |> Html.text
+    multiplyByFive 3
         |> Debug.toString
         |> Html.text
 
@@ -144,3 +157,54 @@ descending a b =
 
         EQ ->
             EQ
+
+
+validateEmail : String -> ( String, String )
+validateEmail email =
+    let
+        emailPattern =
+            "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b"
+
+        regex =
+            Maybe.withDefault Regex.never <|
+                Regex.fromString emailPattern
+
+        isValid =
+            Regex.contains regex email
+    in
+    if isValid then
+        ( "Valid email", "green" )
+
+    else
+        ( "Invalid email", "red" )
+
+
+multiplyByFive : number -> number
+multiplyByFive number =
+    let
+        multiplier =
+            5
+    in
+    number * multiplier
+
+
+scoreMultiplier : Int
+scoreMultiplier =
+    2
+
+
+highestScores : List number
+highestScores =
+    [ 316, 320, 312, 370, 337, 318, 314 ]
+
+
+doubleScores scores =
+    List.map (\x -> x * scoreMultiplier) scores
+
+
+scoresLessThan320 scores =
+    List.filter isLessThan320 scores
+
+
+isLessThan320 score =
+    score < 320
