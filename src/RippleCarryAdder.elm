@@ -1,6 +1,7 @@
 module RippleCarryAdder exposing
     ( Binary
     , andGate
+    , digits
     , fullAdder
     , halfAdder
     , inverter
@@ -8,7 +9,7 @@ module RippleCarryAdder exposing
     , rippleCarryAdder
     )
 
-import Array
+import Array exposing (Array)
 import Bitwise
 
 
@@ -81,7 +82,7 @@ type alias Binary =
     }
 
 
-rippleCarryAdder : Int -> Int -> Int -> { carry : Int, sum0 : Int, sum1 : Int, sum2 : Int, sum3 : Int }
+rippleCarryAdder : Int -> Int -> Int -> Int
 rippleCarryAdder a b carryIn =
     let
         -- Extract digits
@@ -104,19 +105,16 @@ rippleCarryAdder a b carryIn =
         finalResult =
             fullAdder firstSignal.d0 secondSignal.d0 thirdResult.carry
     in
-    { carry = finalResult.carry
-    , sum0 = finalResult.sum
-    , sum1 = thirdResult.sum
-    , sum2 = secondResult.sum
-    , sum3 = firstResult.sum
-    }
+    [ finalResult, thirdResult, secondResult, firstResult ]
+        |> List.map .sum
+        |> (::) finalResult.carry
+        |> numberFromDigits
 
 
 extractDigits : Int -> { d0 : Int, d1 : Int, d2 : Int, d3 : Int }
 extractDigits number =
-    String.fromInt number
-        |> String.split ""
-        |> List.map stringToInt
+    digits number
+        |> padZeros 4
         |> Array.fromList
         |> arrayToRecord
 
@@ -127,7 +125,7 @@ stringToInt string =
         |> Maybe.withDefault -1
 
 
-arrayToRecord : Array a -> { d0 : Int, d1 : Int, d2 : Int, d3 : Int }
+arrayToRecord : Array Int -> { d0 : Int, d1 : Int, d2 : Int, d3 : Int }
 arrayToRecord array =
     let
         firstElement =
@@ -151,3 +149,31 @@ arrayToRecord array =
     , d2 = thirdElement
     , d3 = fourthElement
     }
+
+
+numberFromDigits : List Int -> Int
+numberFromDigits digitsList =
+    List.foldl (\digit number -> digit + 10 * number) 0 digitsList
+
+
+digits : Int -> List Int
+digits number =
+    let
+        getDigits n =
+            if n == 0 then
+                []
+
+            else
+                remainderBy 10 n :: getDigits (n // 10)
+    in
+    getDigits number
+        |> List.reverse
+
+
+padZeros : Int -> List Int -> List Int
+padZeros total list =
+    let
+        numberOfZeros =
+            total - List.length list
+    in
+    List.repeat numberOfZeros 0 ++ list
