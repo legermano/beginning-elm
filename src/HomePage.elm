@@ -4,6 +4,7 @@ import Html exposing (div, h1, p, strong, text)
 import Html.Attributes exposing (class)
 
 
+view : String -> Html.Html msg
 view model =
     div [ class "jumbotron" ]
         [ h1 [] [ text "Welcome to Dunder Mifflin!" ]
@@ -20,5 +21,6 @@ view model =
         ]
 
 
+main : Html.Html msg
 main =
     view "dummy model"

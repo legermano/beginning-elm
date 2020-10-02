@@ -1,15 +1,40 @@
 module Playground exposing
-    ( doubleScores
+    ( Greeting(..)
+    , add
+    , computeSpeed
+    , computeTime
+    , descending
+    , divide
+    , doubleScores
+    , escapeEarth
+    , hashTag
     , highestScores
+    , isLessThan320
+    , list1
+    , list2
     , main
+    , multiply
+    , multiplyByFive
+    , revelation
+    , sayHello
     , scoresLessThan320
+    , signUp
+    , validateEmail
     )
 
-import Css exposing (Number, int)
-import Html
+import Html exposing (Html, text)
+import MyList exposing (MyList(..), isEmpty)
 import Regex
 
 
+type Greeting
+    = Howdy
+    | Hola
+    | Namaste String
+    | NumericalHi Int Int
+
+
+main : Html msg
 main =
     -- computeTime 2 3
     --     |> computeSpeed 7.5
@@ -22,9 +47,12 @@ main =
     -- validateEmail "thedude@rubix.com"
     --     |> Debug.toString
     --     |> Html.text
-    multiplyByFive 3
+    -- multiplyByFive 3
+    --     |> Debug.toString
+    --     |> Html.text
+    isEmpty list2
         |> Debug.toString
-        |> Html.text
+        |> text
 
 
 escapeEarth : Float -> String -> Float -> String
@@ -198,13 +226,70 @@ highestScores =
     [ 316, 320, 312, 370, 337, 318, 314 ]
 
 
+doubleScores : List Int -> List Int
 doubleScores scores =
     List.map (\x -> x * scoreMultiplier) scores
 
 
+scoresLessThan320 : List number -> List number
 scoresLessThan320 scores =
     List.filter isLessThan320 scores
 
 
+isLessThan320 : number -> Bool
 isLessThan320 score =
     score < 320
+
+
+sayHello : Greeting -> String
+sayHello greeting =
+    case greeting of
+        Howdy ->
+            "Howdt y'all doin'?"
+
+        Hola ->
+            "Hola amigo!"
+
+        Namaste message ->
+            message
+
+        NumericalHi value1 value2 ->
+            value1 + value2 |> String.fromInt
+
+
+signUp : String -> String -> Result String String
+signUp email ageStr =
+    case String.toInt ageStr of
+        Nothing ->
+            Err "Age must be an integer."
+
+        Just age ->
+            let
+                emailPattern =
+                    "\\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}\\b"
+
+                regex =
+                    Maybe.withDefault Regex.never <|
+                        Regex.fromString emailPattern
+
+                isValidEmail =
+                    Regex.contains regex email
+            in
+            if age < 13 then
+                Err "You need to be at leas 13 years old to sign up."
+
+            else if isValidEmail then
+                Ok "Your account has been created successfully!"
+
+            else
+                Err "You entered an invalid email"
+
+
+list1 : MyList a
+list1 =
+    Empty
+
+
+list2 : MyList number
+list2 =
+    Node 9 Empty

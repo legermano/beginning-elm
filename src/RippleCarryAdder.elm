@@ -119,12 +119,6 @@ extractDigits number =
         |> arrayToRecord
 
 
-stringToInt : String -> Int
-stringToInt string =
-    String.toInt string
-        |> Maybe.withDefault -1
-
-
 arrayToRecord : Array Int -> { d0 : Int, d1 : Int, d2 : Int, d3 : Int }
 arrayToRecord array =
     let
